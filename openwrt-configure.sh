@@ -13,6 +13,7 @@ INSTALL_DAWN=${INSTALL_DAWN:-'false'}
 INSTALL_USTEER=${INSTALL_USTEER:-'false'}
 INSTALL_DNSCRYPT_PROXY2=${INSTALL_DNSCRYPT_PROXY2:-'false'}
 INSTALL_UNBOUND=${INSTALL_UNBOUND:-'true'}
+INSTALL_ADGUARDHOME=${INSTALL_ADGUARDHOME:-'false'}
 CRYPTO_LIB=${CRYPTO_LIB:-'openssl'} # wolfssl or openssl; if empty - mbedtls
 # ADDITIONAL_DRIVERS=${ADDITIONAL_DRIVERS:-'kmod-mt7921e kmod-mt7921-common kmod-mt7921-firmware kmod-mt7925-common kmod-mt7925e'}
 ADDITIONAL_DRIVERS=${ADDITIONAL_DRIVERS:-''}
@@ -39,9 +40,9 @@ if [ -n "$CRYPTO_LIB" ]; then
   COMMAND="$COMMAND; opkg remove wpad-basic-mbedtls; opkg install wpad-$CRYPTO_LIB"
 
   if [[ "$CRYPTO_LIB" =~ ^(Wolfssl|wolfssl)$ ]]; then
-    FS_FULL_WPAD_PACKAGES="$FS_FULL_WPAD_PACKAGES -libustream-mbedtls -libmbedtls libustream-wolfssl wpad-wolfssl"
+    FS_FULL_WPAD_PACKAGES="$FS_FULL_WPAD_PACKAGES -apk-mbedtls -libustream-mbedtls -libmbedtls libustream-wolfssl wpad-wolfssl apk-wolfssl"
   elif [[ "$CRYPTO_LIB" =~ ^(Openssl|openssl)$ ]]; then
-    FS_FULL_WPAD_PACKAGES="$FS_FULL_WPAD_PACKAGES -libustream-mbedtls -libmbedtls libustream-openssl wpad-openssl libopenssl-devcrypto libopenssl-afalg_sync"
+    FS_FULL_WPAD_PACKAGES="$FS_FULL_WPAD_PACKAGES -apk-mbedtls -libustream-mbedtls -libmbedtls libustream-openssl wpad-openssl libopenssl-devcrypto libopenssl-afalg_sync apk-openssl"
   fi
 fi
 
@@ -77,6 +78,10 @@ if [[ "$DEVICE" =~ Main|main ]]; then
     fi
     if [[ "$INSTALL_UNBOUND" =~ True|true ]]; then
         PACKAGES="$PACKAGES unbound-daemon luci-app-unbound"
+    fi
+
+    if [[ "$INSTALL_ADGUARDHOME" =~ True|true ]]; then
+        PACKAGES="$PACKAGES adguardhome"
     fi
 fi
 
@@ -138,7 +143,7 @@ esac
 # wpad-basic-mbedtls with wpad-mbedtls
 
 # To replace mbedtls with openssl via firmware-selector, just add:
-# -wpad-basic-mbedtls -libustream-mbedtls -libmbedtls libustream-openssl wpad-openssl
+# -wpad-basic-mbedtls -libustream-mbedtls -libmbedtls libustream-openssl wpad-openssl -apk-mbedtls apk-openssl
 #
 # To replace mbedtls with wolfssl via firmware-selector, just add:
-# -wpad-basic-mbedtls -libustream-mbedtls -libmbedtls libustream-wolfssl wpad-wolfssl
+# -wpad-basic-mbedtls -libustream-mbedtls -libmbedtls libustream-wolfssl wpad-wolfssl -apk-mbedtls apk-wolfssl
