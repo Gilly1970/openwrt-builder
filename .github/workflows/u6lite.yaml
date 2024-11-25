@@ -1,6 +1,6 @@
 ---
 # Based on https://github.com/JuliusBairaktaris/QualcommNSS_Builder/blob/main/.github/workflows/build.yaml
-name: Build OpenWRT for Unifi 6 lite
+name: Unifi 6 lite
 
 on:
   workflow_dispatch:
@@ -62,6 +62,18 @@ jobs:
           curl -SL "https://raw.githubusercontent.com/danpawlik/openwrt-builder/master/$DEVICE_CONFIG" > .config
           curl -SL "https://raw.githubusercontent.com/danpawlik/openwrt-builder/master/$ROLE_CONFIG" >> .config
           curl -SL https://raw.githubusercontent.com/danpawlik/openwrt-builder/master/configs/common/snapshot-short >> .config
+
+      - name: Disable LTO
+        run: |
+          sed -i '/CONFIG_USE_LTO=y/d' .config
+
+      - name: Enable openssl
+        run: |
+          sed -i '/CONFIG_PACKAGE_wpad-mbedtls=y/d' .config
+          curl -SL https://raw.githubusercontent.com/danpawlik/openwrt-builder/master/configs/common/openssl >> .config
+
+      - name: Run defconfig
+        run:
           make defconfig
 
       - name: Remove packages that are marked as modules
