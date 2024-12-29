@@ -40,9 +40,9 @@ if [ -n "$CRYPTO_LIB" ]; then
   COMMAND="$COMMAND; opkg remove wpad-basic-mbedtls; opkg install wpad-$CRYPTO_LIB"
 
   if [[ "$CRYPTO_LIB" =~ ^(Wolfssl|wolfssl)$ ]]; then
-    FS_FULL_WPAD_PACKAGES="$FS_FULL_WPAD_PACKAGES -apk-mbedtls -libustream-mbedtls -libmbedtls libustream-wolfssl wpad-wolfssl apk-wolfssl"
+    FS_FULL_WPAD_PACKAGES="$FS_FULL_WPAD_PACKAGES -apk-mbedtls -libmbedtls wpad-wolfssl apk-wolfssl"
   elif [[ "$CRYPTO_LIB" =~ ^(Openssl|openssl)$ ]]; then
-    FS_FULL_WPAD_PACKAGES="$FS_FULL_WPAD_PACKAGES -apk-mbedtls -libustream-mbedtls -libmbedtls libustream-openssl wpad-openssl apk-openssl"
+    FS_FULL_WPAD_PACKAGES="$FS_FULL_WPAD_PACKAGES -apk-mbedtls -libmbedtls wpad-openssl apk-openssl"
   fi
 fi
 
